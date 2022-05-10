@@ -1,7 +1,7 @@
 from http import client
 import socket
 import json
-import time
+import threading
 
 #Envoie de la requête et réception de la réponse du serveur
 m = {
@@ -31,12 +31,21 @@ s.listen()
 print("Socket is listening")
 
 client, address = s.accept()
-request = json.loads(client.recv(2048).decode())
-print(request)             #Request ping reçue
-pong = {
-   "response": "pong"
-}
-data2 = json.dumps(pong)
-client.send(bytes(data2,encoding="utf-8"))
 
-print("Message envoyé")     #Fully subscribed
+def client_receive():
+   while True:
+      try:
+         request = json.loads(client.recv(2048).decode())
+         if request == {'request': 'ping'}:                   #Request ping reçue
+            pong = {'response': 'pong'}
+            data2 = json.dumps(pong)
+            client.send(bytes(data2,encoding="utf-8"))        #Réponse Pong envoyéé   
+            print("Pong envoyé")
+         else:
+            print(request)
+
+      except:
+         pass
+
+receive_thread = threading.Thread(target = client_receive)
+receive_thread.start()
