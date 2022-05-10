@@ -3,43 +3,8 @@ import socket
 import json
 import threading
 
-#Envoie de la requête et réception de la réponse du serveur
-m = {
-   "request": "subscribe",
-   "port": 8888,
-   "name": "fun_name_for_the_client",
-   "matricules": ["12345", "67890"]
-}
 
-data = json.dumps(m)
-s = socket.socket()
-
-s.connect(("localhost", 3000))
-s.sendall(bytes(data,encoding="utf-8"))
-
-received = s.recv(1024)
-received = received.decode("utf-8")
-print(received)
-s.close()
-
-#Première connection établie, établissement de l'échange message ping pong
-
-s = socket.socket()
-print("Socket succesfully created")
-s.bind(("0.0.0.0", 8888))
-s.listen()
-print("Socket is listening")
-
-
-client, address = s.accept()
-
-a = str()
-nbdevie = int()
-list_of_errors = []
-state_of_the_game = []
-
-the_move_played = int
-
+#Règle du jeu
 directions = [
     ( 0,  1),
     ( 0, -1),
@@ -163,6 +128,47 @@ def possibleMoves(state):
 def random(player, board):
    return random.choice(possibleMoves(player, board))
 
+#Envoie de la requête et réception de la réponse du serveur
+a = input("Nom de l'utilisateur : ")
+b = int(input("Numéro de port : "))
+e = str(input("Matricule 1 : "))
+f = str(input("Matricule 2 : "))
+m = {
+   "request": "subscribe",
+   "port": b,
+   "name": a,
+   "matricules": [e, f]
+}
+
+data = json.dumps(m)
+s = socket.socket()
+
+s.connect(("localhost", 3000))
+s.sendall(bytes(data,encoding="utf-8"))
+
+received = s.recv(1024)
+received = received.decode("utf-8")
+print(received)
+s.close()
+
+#Première connection établie, établissement de l'échange de messages entre client et serveur
+
+s = socket.socket()
+print("Socket succesfully created")
+s.bind(("0.0.0.0", b))
+s.listen()
+print("Socket is listening")
+
+
+client, address = s.accept()
+
+a = str()
+nbdevie = int()
+list_of_errors = []
+state_of_the_game = []
+
+the_move_played = int
+
 def clienttoserver():
    while True:
       try:
@@ -170,11 +176,12 @@ def clienttoserver():
          if request == {'request': 'ping'}:                   #Request ping reçue
             pong = {'response': 'pong'}
             data2 = json.dumps(pong)
-            client.send(bytes(data2,encoding="utf-8"))        #Réponse Pong envoyéé   
+            client.send(bytes(data2,encoding="utf-8"))        #Réponse Pong envoyée
             print("Pong envoyé")
-         elif request == {"request": a,"lives": nbdevie,"errors": list_of_errors,"state": state_of_the_game}:
-            b = request["state"]
-
+         elif request == {"request": a,"lives": nbdevie,"errors": list_of_errors,"state": state_of_the_game}:    #Requête de coup du serveur
+            c = request["state"]
+            possiblemove = possibleMoves(c)
+            the_move_played = random.choices(possiblemove)
             moncoup = {"response": "move", "move": the_move_played, "message": "Fun message"}
             data3 = json.dumps(moncoup)
             client.send(bytes(data3, encoding="utf-8"))
