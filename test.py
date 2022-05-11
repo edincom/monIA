@@ -4,7 +4,6 @@ import json
 import threading
 import random
 
-
 #Règle du jeu
 directions = [
     ( 0,  1),
@@ -39,48 +38,47 @@ def walk(start, direction):
         current = add(current, direction)
         yield current
 class GameEnd(Exception):
-	def __init__(self, lastState):
-		self.__state = lastState
+    def __init__(self, lastState):
+        self.__state = lastState
 
-	@property
-	def state(self):
-		return self.__state
+    @property
+    def state(self):
+        return self.__state
 
-	def __str__(self):
-		return 'Game Over'
+    def __str__(self):
+        return 'Game Over'
 
 class GameWin(GameEnd):
-	def __init__(self, winner, lastState):
-		super().__init__(lastState)
-		self.__winner = winner
+    def __init__(self, winner, lastState):
+        super().__init__(lastState)
+        self.__winner = winner
 
-	@property
-	def winner(self):
-		return self.__winner
+    @property
+    def winner(self):
+        return self.__winner
 
-	def __str__(self):
-		return super().__str__() + ': {} win the game'.format(self.winner)
+    def __str__(self):
+        return super().__str__() + ': {} win the game'.format(self.winner)
 
 class BadMove(Exception):
-	pass
+    pass
 
 class GameDraw(GameEnd):
-	def __init__(self, lastState):
-		super().__init__(lastState)
+    def __init__(self, lastState):
+        super().__init__(lastState)
 
-	def __str__(self):
-		return super().__str__() + ': Draw'
+    def __str__(self):
+        return super().__str__() + ': Draw'
 
 class GameLoop(GameDraw):
-	def __init__(self, lastState):
-		super().__init__(lastState)
+    def __init__(self, lastState):
+        super().__init__(lastState)
 
-	def __str__(self):
-		return super().__str__() + ': Stopped because of lopping behavior'
+    def __str__(self):
+        return super().__str__() + ': Stopped because of lopping behavior'
 
 class BadGameInit(Exception):
-	pass
-
+    pass
 
 
 def willBeTaken(state, move):
@@ -126,8 +124,6 @@ def possibleMoves(state):
             pass
     return res
 
-def random(player, board):
-   return random.choice(possibleMoves(player, board))
 
 #Envoie de la requête et réception de la réponse du serveur
 a = input("Nom de l'utilisateur : ")
@@ -145,7 +141,6 @@ data = json.dumps(m)
 s = socket.socket()
 s.connect(("localhost", 3000))
 
-
 s.sendall(bytes(data,encoding="utf-8"))
 
 received = s.recv(1024)
@@ -158,7 +153,6 @@ s.close()
 s = socket.socket()
 print("Socket succesfully created")
 s.bind(("0.0.0.0", b))
-
 
 a = str()
 nbdevie = int()
@@ -179,14 +173,14 @@ def clienttoserver():
             client.send(bytes(data2,encoding="utf-8"))        #Réponse Pong envoyée
             print("Pong")
         elif request["request"] == "play":                   #Requête de coup du serveur
-            print("Requête de coup de la part du serveur")
+            #print("Requête de coup de la part du serveur")
             c = request["state"]
             d = c["board"]
-            print(d)
-            possiblemove = possibleMoves(c)
+            #print(d)
             print("Calcul en cours")
+            possiblemove = possibleMoves(c)
             print(possiblemove)
-            the_move_played = random.choices(possiblemove)
+            the_move_played = int(random.choice(possiblemove))
             print(the_move_played)
             moncoup = {"response": "move", "move": the_move_played, "message": "Fun message"}
             data3 = json.dumps(moncoup)
@@ -201,3 +195,4 @@ def clienttoserver():
 
 receive_thread = threading.Thread(target = clienttoserver)
 receive_thread.start()
+receive_thread.join()
