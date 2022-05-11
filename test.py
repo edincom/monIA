@@ -180,12 +180,18 @@ def clienttoserver():
             print("Calcul en cours")
             possiblemove = possibleMoves(c)
             print(possiblemove)
-            the_move_played = int(random.choice(possiblemove))
-            print(the_move_played)
-            moncoup = {"response": "move", "move": the_move_played, "message": "Fun message"}
-            data3 = json.dumps(moncoup)
-            client.send(bytes(data3, encoding="utf-8"))        #Réponse du coup envoyé
-            print("Coup envoyé")
+            moncoup = {}
+            if len(possiblemove) == 0:
+                moncoup = {"response": "giveup",}
+                data3 = json.dumps(moncoup)
+                print("abandon")
+                client.send(bytes(data3, encoding="utf-8"))        #Réponse du coup envoyé
+            else:
+                the_move_played = int(random.choice(possiblemove))
+                moncoup = {"response": "move", "move": the_move_played, "message": "Joue plus vite"}
+                data3 = json.dumps(moncoup)
+                client.send(bytes(data3, encoding="utf-8"))        #Réponse du coup envoyé
+                print("Coup envoyé")
         elif len(request) == 0:
             s.close()
         else:
