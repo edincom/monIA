@@ -142,8 +142,9 @@ m = {
 
 data = json.dumps(m)
 s = socket.socket()
-
 s.connect(("localhost", 3000))
+
+
 s.sendall(bytes(data,encoding="utf-8"))
 
 received = s.recv(1024)
@@ -156,11 +157,7 @@ s.close()
 s = socket.socket()
 print("Socket succesfully created")
 s.bind(("0.0.0.0", b))
-s.listen()
-print("Socket is listening")
 
-
-client, address = s.accept()
 
 a = str()
 nbdevie = int()
@@ -171,26 +168,33 @@ the_move_played = int
 
 def clienttoserver():
    while True:
+      s.listen() 
+      client, address = s.accept()
       try:
-         request = json.loads(client.recv(2048).decode())
-         if request == {'request': 'ping'}:                   #Request ping reçue
+        request = json.loads(client.recv(2048).decode("utf-8"))
+        print("Requête reçue : ")
+        if request["request"] == 'ping':                     #Requête Ping du serveur
+            print("Ping reçu")
             pong = {'response': 'pong'}
             data2 = json.dumps(pong)
             client.send(bytes(data2,encoding="utf-8"))        #Réponse Pong envoyée
             print("Pong envoyé")
-         elif request == {"request": a,"lives": nbdevie,"errors": list_of_errors,"state": state_of_the_game}:    #Requête de coup du serveur
+        elif request["request"] == "play":                   #Requête de coup du serveur
+            print("Requête de coup de la part du serveur")
             c = request["state"]
             possiblemove = possibleMoves(c)
             the_move_played = random.choices(possiblemove)
             moncoup = {"response": "move", "move": the_move_played, "message": "Fun message"}
             data3 = json.dumps(moncoup)
-            client.send(bytes(data3, encoding="utf-8"))
+            client.send(bytes(data3, encoding="utf-8"))       #Réponse du coup envoyé
             print("Coup envoyé")
-
-         else:
+        elif len(request) == 0:
+            s.close()
+        else:
+            print("a")
             print(request)
       except:
-         pass
+          pass             
 
 receive_thread = threading.Thread(target = clienttoserver)
 receive_thread.start()
