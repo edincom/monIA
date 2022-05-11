@@ -2,6 +2,7 @@ from http import client
 import socket
 import json
 import threading
+import random
 
 
 #Règle du jeu
@@ -172,26 +173,28 @@ def clienttoserver():
       client, address = s.accept()
       try:
         request = json.loads(client.recv(2048).decode("utf-8"))
-        print("Requête reçue : ")
         if request["request"] == 'ping':                     #Requête Ping du serveur
-            print("Ping reçu")
             pong = {'response': 'pong'}
             data2 = json.dumps(pong)
             client.send(bytes(data2,encoding="utf-8"))        #Réponse Pong envoyée
-            print("Pong envoyé")
+            print("Pong")
         elif request["request"] == "play":                   #Requête de coup du serveur
             print("Requête de coup de la part du serveur")
             c = request["state"]
+            d = c["board"]
+            print(d)
             possiblemove = possibleMoves(c)
+            print("Calcul en cours")
+            print(possiblemove)
             the_move_played = random.choices(possiblemove)
+            print(the_move_played)
             moncoup = {"response": "move", "move": the_move_played, "message": "Fun message"}
             data3 = json.dumps(moncoup)
-            client.send(bytes(data3, encoding="utf-8"))       #Réponse du coup envoyé
+            client.send(bytes(data3, encoding="utf-8"))        #Réponse du coup envoyé
             print("Coup envoyé")
         elif len(request) == 0:
             s.close()
         else:
-            print("a")
             print(request)
       except:
           pass             
