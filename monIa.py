@@ -1,4 +1,3 @@
-from http import client
 import socket
 import json
 import threading
@@ -150,8 +149,7 @@ s.close()
 
 #Première connection établie, établissement de l'échange de messages entre client et serveur
 
-s = socket.socket()
-print("Socket succesfully created")
+s = socket.socket()                       #Socket crée avec succès
 s.bind(("0.0.0.0", b))
 
 a = str()
@@ -161,7 +159,7 @@ state_of_the_game = []
 
 the_move_played = int
 
-def clienttoserver():
+def clienttoserver():                      #Boucle qui écoute et renvoie des message en fonction de la requête reçue
    while True:
       s.listen() 
       client, address = s.accept()
@@ -182,13 +180,13 @@ def clienttoserver():
             print(possiblemove)
             moncoup = {}
             if len(possiblemove) == 0:
-                moncoup = {"response": "giveup",}
+                moncoup = {"response":"giveup" }
                 data3 = json.dumps(moncoup)
-                print("abandon")
-                client.send(bytes(data3, encoding="utf-8"))        #Réponse du coup envoyé
+                client.send(bytes(data3, encoding="utf-8"))
+                print("Le joueur abandonne")        #Réponse du coup envoyé
             else:
                 the_move_played = int(random.choice(possiblemove))
-                moncoup = {"response": "move", "move": the_move_played, "message": "Joue plus vite"}
+                moncoup = {"response": "move", "move": the_move_played, "message": ""}
                 data3 = json.dumps(moncoup)
                 client.send(bytes(data3, encoding="utf-8"))        #Réponse du coup envoyé
                 print("Coup envoyé")
@@ -201,4 +199,3 @@ def clienttoserver():
 
 receive_thread = threading.Thread(target = clienttoserver)
 receive_thread.start()
-receive_thread.join()
