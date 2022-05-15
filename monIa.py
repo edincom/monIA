@@ -1,7 +1,7 @@
 import socket
 import json
 import threading
-import random
+
 
 #Règle du jeu
 directions = [
@@ -154,7 +154,7 @@ def ComputerMove(state_of_the_game):
         return {
                     "response": "move",
                     "move": BestMove(PossibleMoves,PawnsDestroyed),
-                    "message": " "
+                    "message": "good"
                 }
     except Exception as e :
                     print("ComputerMoveError")
@@ -164,10 +164,10 @@ def ComputerMove(state_of_the_game):
 
 
 #Envoie de la requête et réception de la réponse du serveur
-a = "un_peu_meilleur_que_random"
+a = input("Nom de l'utilisateur : ")
 b = int(input("Numéro de port : "))
-e = str(195357)
-f = str(20038)
+e = str(20039)
+f = str(195387)
 m = {
    "request": "subscribe",
    "port": b,
@@ -210,18 +210,24 @@ def clienttoserver():                      #Boucle qui écoute et renvoie des me
             client.send(bytes(data2,encoding="utf-8"))        #Réponse Pong envoyée
             print("Pong")
         elif request["request"] == "play":                   #Requête de coup du serveur
+            print("Requête de coup de la part du serveur")
             c = request["state"]
             d = c["board"]
+            print(d)
+            print("Calcul en cours")
             possiblemove = possibleMoves(c)
+            print(possiblemove)
             moncoup = {}
             if len(possiblemove) == 0:
-                moncoup = {"response": "move", "move": None, "message": " "}
+                moncoup = {"response":"giveup" }
                 data3 = json.dumps(moncoup)
-                client.send(bytes(data3, encoding="utf-8"))      #Le joueur passe son tour
+                client.send(bytes(data3, encoding="utf-8"))
+                print("Le joueur abandonne")        #Réponse du coup envoyé
             else:
                 moncoup = ComputerMove(c)
                 data3 = json.dumps(moncoup)
                 client.send(bytes(data3, encoding="utf-8"))        #Réponse du coup envoyé
+                print("Coup envoyé")
         elif len(request) == 0:
             s.close()
         else:
@@ -231,3 +237,6 @@ def clienttoserver():                      #Boucle qui écoute et renvoie des me
 
 receive_thread = threading.Thread(target = clienttoserver)
 receive_thread.start()
+
+
+
