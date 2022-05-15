@@ -113,22 +113,61 @@ def willBeTaken(state, move):
     
     return [index(case) for case in cases]
 
-def possibleMoves(state):
-    res = []
+
+
+
+def possibleMoves(state): #fonction calculant tous les mouvements possibles. Pionsdestroyed reprend le nombre de pions à éliminer pour chaque mouvements.
+    PossibleMoves = []
+    PionsDestroyed= []
     for move in range(64):
         try:
-            willBeTaken(state, move)
-            res.append(move)
+            PionsDestroyed.append(willBeTaken(state, move)) 
+            PossibleMoves.append(move)
         except BadMove:
             pass
-    return res
+    return PossibleMoves,PionsDestroyed
+
+def maximumIndices(list): #Fonction calculant l'indice max d'une liste
+    maxima = list[0]
+    length=len(list)
+    for i in range(length):
+        if list[i] >= maxima:
+            maxima = list[i]
+    return maxima
+
+
+def BestMove(PossibleMoves,PionsDestroyed): #on execute le mouvement correspondant au nbre max de pions détruit
+    if PossibleMoves!=[]:
+        a = maximumIndices(PionsDestroyed) #on trouve l'indice de l'élément max de la liste
+        b = PionsDestroyed.index(a) #On recupere la valeur correspondant à l'indice
+        c = PossibleMoves[b]
+        print("Coup joué" )
+        print(c)
+        return c
+    else : 
+        null = None
+        return null
+
+def ComputerMove(state_of_the_game):
+    try :
+        PossibleMoves,PawnsDestroyed = possibleMoves(state_of_the_game)
+        return {
+                    "response": "move",
+                    "move": BestMove(PossibleMoves,PawnsDestroyed),
+                    "message": "good"
+                }
+    except Exception as e :
+                    print("ComputerMoveError")
+                    print(e)
+
+
 
 
 #Envoie de la requête et réception de la réponse du serveur
 a = input("Nom de l'utilisateur : ")
 b = int(input("Numéro de port : "))
-e = str(input("Matricule 1 : "))
-f = str(input("Matricule 2 : "))
+e = str(20039)
+f = str(195387)
 m = {
    "request": "subscribe",
    "port": b,
@@ -171,10 +210,10 @@ def clienttoserver():                      #Boucle qui écoute et renvoie des me
             client.send(bytes(data2,encoding="utf-8"))        #Réponse Pong envoyée
             print("Pong")
         elif request["request"] == "play":                   #Requête de coup du serveur
-            #print("Requête de coup de la part du serveur")
+            print("Requête de coup de la part du serveur")
             c = request["state"]
             d = c["board"]
-            #print(d)
+            print(d)
             print("Calcul en cours")
             possiblemove = possibleMoves(c)
             print(possiblemove)
@@ -185,8 +224,10 @@ def clienttoserver():                      #Boucle qui écoute et renvoie des me
                 client.send(bytes(data3, encoding="utf-8"))
                 print("Le joueur abandonne")        #Réponse du coup envoyé
             else:
-                the_move_played = int(random.choice(possiblemove))
-                moncoup = {"response": "move", "move": the_move_played, "message": ""}
+                # the_move_played = int(random.choices(c))
+                # moncoup = {"response": "move", "move": the_move_played,
+                #     "message": "good"}
+                moncoup = ComputerMove(c)
                 data3 = json.dumps(moncoup)
                 client.send(bytes(data3, encoding="utf-8"))        #Réponse du coup envoyé
                 print("Coup envoyé")
@@ -199,3 +240,4 @@ def clienttoserver():                      #Boucle qui écoute et renvoie des me
 
 receive_thread = threading.Thread(target = clienttoserver)
 receive_thread.start()
+
