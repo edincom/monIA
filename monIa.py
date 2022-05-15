@@ -1,7 +1,7 @@
 import socket
 import json
 import threading
-import random
+
 
 #Règle du jeu
 directions = [
@@ -224,9 +224,6 @@ def clienttoserver():                      #Boucle qui écoute et renvoie des me
                 client.send(bytes(data3, encoding="utf-8"))
                 print("Le joueur abandonne")        #Réponse du coup envoyé
             else:
-                # the_move_played = int(random.choices(c))
-                # moncoup = {"response": "move", "move": the_move_played,
-                #     "message": "good"}
                 moncoup = ComputerMove(c)
                 data3 = json.dumps(moncoup)
                 client.send(bytes(data3, encoding="utf-8"))        #Réponse du coup envoyé
@@ -240,4 +237,8 @@ def clienttoserver():                      #Boucle qui écoute et renvoie des me
 
 receive_thread = threading.Thread(target = clienttoserver)
 receive_thread.start()
+
+
+
+
 
