@@ -11,7 +11,7 @@ Lancer la commande suivante à partir du réperatoire PI2CChampionshipRunner: py
 Vous avez maintenant lancé le serveur.
 
 Pour connecter le client:
-Lancer la commande:  python BetterIA.py.
+Lancer la commande:  python monIa.py.
 Vous êtes maintenant connectés au serveur et prêt à jouer.
 
 import socket: Pour effectuer les communications avec le serveur
