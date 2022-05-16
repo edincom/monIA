@@ -154,7 +154,7 @@ def ComputerMove(state_of_the_game):
         return {
                     "response": "move",
                     "move": BestMove(PossibleMoves,PawnsDestroyed),
-                    "message": "good"
+                    "message": "I'm the best"
                 }
     except Exception as e :
                     print("ComputerMoveError")
@@ -164,7 +164,12 @@ def ComputerMove(state_of_the_game):
 
 
 #Envoie de la requête et réception de la réponse du serveur
+<<<<<<< HEAD
 a = "un_peu_meilleur_que_random"
+=======
+
+a = str("The Best")
+>>>>>>> f27dcbcda39250fc286d1d1b301f3517ee008e2f
 b = int(input("Numéro de port : "))
 e = str(20038)
 f = str(195357)
@@ -237,6 +242,8 @@ def clienttoserver():                      #Boucle qui écoute et renvoie des me
 
 receive_thread = threading.Thread(target = clienttoserver)
 receive_thread.start()
+
+
 
 
 
