@@ -164,12 +164,8 @@ def ComputerMove(state_of_the_game):
 
 
 #Envoie de la requête et réception de la réponse du serveur
-<<<<<<< HEAD
-a = "un_peu_meilleur_que_random"
-=======
 
 a = str("The Best")
->>>>>>> f27dcbcda39250fc286d1d1b301f3517ee008e2f
 b = int(input("Numéro de port : "))
 e = str(20038)
 f = str(195357)
@@ -213,26 +209,20 @@ def clienttoserver():                      #Boucle qui écoute et renvoie des me
             pong = {'response': 'pong'}
             data2 = json.dumps(pong)
             client.send(bytes(data2,encoding="utf-8"))        #Réponse Pong envoyée
-            print("Pong")
         elif request["request"] == "play":                   #Requête de coup du serveur
-            print("Requête de coup de la part du serveur")
             c = request["state"]
             d = c["board"]
-            print(d)
-            print("Calcul en cours")
             possiblemove = possibleMoves(c)
             print(possiblemove)
             moncoup = {}
             if len(possiblemove) == 0:
-                moncoup = {"response":"giveup" }
+                moncoup = {"response": "move", "move": None,"message": ""}
                 data3 = json.dumps(moncoup)
-                client.send(bytes(data3, encoding="utf-8"))
-                print("Le joueur abandonne")        #Réponse du coup envoyé
+                client.send(bytes(data3, encoding="utf-8"))        #Réponse du coup envoyé
             else:
                 moncoup = ComputerMove(c)
                 data3 = json.dumps(moncoup)
                 client.send(bytes(data3, encoding="utf-8"))        #Réponse du coup envoyé
-                print("Coup envoyé")
         elif len(request) == 0:
             s.close()
         else:
