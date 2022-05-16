@@ -164,10 +164,10 @@ def ComputerMove(state_of_the_game):
 
 
 #Envoie de la requête et réception de la réponse du serveur
-a = input("Nom de l'utilisateur : ")
+a = "un_peu_meilleur_que_random"
 b = int(input("Numéro de port : "))
-e = str(20039)
-f = str(195387)
+e = str(20038)
+f = str(195357)
 m = {
    "request": "subscribe",
    "port": b,
